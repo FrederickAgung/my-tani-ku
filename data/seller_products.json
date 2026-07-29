@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1785095995854,
+    "nama": "Cangkul",
+    "kategori": "peralatan",
+    "harga": 80000,
+    "deskripsi": "Cangkul unntuk mencangkul tanah ",
+    "rating": 0,
+    "stok": true,
+    "penjual": "bakakak agung",
+    "gambar": "/uploads/1785095995851-pojuqo.jpg"
+  },
+  {
+    "id": 1785096078275,
+    "nama": "Kangkung",
+    "kategori": "hasil-tani",
+    "harga": 3000,
+    "deskripsi": "Sayur kangkung",
+    "rating": 0,
+    "stok": true,
+    "penjual": "bakakak agung",
+    "gambar": "/uploads/1785096078274-u0et2t.webp"
+  },
+  {
+    "id": 1785096340269,
+    "nama": "Benih Jagung",
+    "kategori": "benih",
+    "harga": 15000,
+    "deskripsi": "Bening Jagung dari Jerman Utara",
+    "rating": 0,
+    "stok": true,
+    "penjual": "bakakak agung",
+    "gambar": "/uploads/1785096340266-eg2x6m.jpg"
+  }
+]
