@@ -22,7 +22,7 @@ export default function DetailProdukPage() {
   }, [id])
 
   const loadProduk = async () => {
-    const res = await fetch('/api/produk')
+    const res = await fetch('/api/produk/seller')
     const data = await res.json()
     const found = data.find(p => p.id === Number(id))
     setProduk(found)

@@ -30,7 +30,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!user) return
     fetch('/api/admin/users').then(r => r.json()).then(setUsers)
-    fetch('/api/produk').then(r => r.json()).then(setProduk)
+    fetch('/api/produk/seller').then(r => r.json()).then(setProduk)
     fetch('/api/orders').then(r => r.json()).then(setOrders)
   }, [user])
 

@@ -7,7 +7,7 @@ export default function HomePage() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    fetch('/api/produk').then(r => r.json()).then(setProduk)
+    fetch('/api/produk/seller').then(r => r.json()).then(setProduk)
     try { setUser(JSON.parse(localStorage.getItem('myTaniku_user'))) } catch {}
   }, [])
 

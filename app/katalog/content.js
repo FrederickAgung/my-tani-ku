@@ -10,7 +10,7 @@ export default function KatalogContent() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    fetch('/api/produk').then(r => r.json()).then(setProduk)
+    fetch('/api/produk/seller').then(r => r.json()).then(setProduk)
     const k = searchParams.get('kategori')
     if (k) setKategoriFilter(k)
   }, [searchParams])
