@@ -4,10 +4,7 @@ export const runtime = 'nodejs'
 import { readCollection } from '@/lib/supabaseData'
 
 export async function GET() {
-  const [produk, sellerProduk] = await Promise.all([
-    readCollection('produk'),
-    readCollection('seller_products'),
-  ])
+  const sellerProduk = await readCollection('seller_products')
 
-  return Response.json([...produk, ...sellerProduk])
+  return Response.json(sellerProduk)
 }
