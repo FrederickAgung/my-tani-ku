@@ -15,6 +15,7 @@ export async function GET() {
     NEXT_PUBLIC_SUPABASE_ANON_KEY_set: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     resolvedUrl: supabaseUrl ? supabaseUrl.substring(0, 20) + '...' : 'null',
     resolvedKeyLength: supabaseKey ? supabaseKey.length : 0,
+    resolvedKeyPrefix: supabaseKey ? supabaseKey.substring(0, 8) + '...' + supabaseKey.substring(supabaseKey.length - 4) : 'null',
     isConfigured: isSupabaseConfigured(),
     cwd: process.cwd(),
   }
