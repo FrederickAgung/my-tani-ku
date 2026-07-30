@@ -30,3 +30,4 @@ test_write_*.txt
 Thumbs.db
 
 .vercel
+SUPABASE_URL|SUPABASE_SERVICE|.env.vercel|.env.temp
