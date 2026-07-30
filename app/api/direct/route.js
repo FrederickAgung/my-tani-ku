@@ -13,22 +13,25 @@ export async function GET() {
   })
 
   // Use fresh client with a UNIQUE query to bust any cache
-  // Fresh client with .select() only - simplest possible query
+  // Check for ALL rows matching the key (not just one)
   const { data, error } = await supabase
     .from('app_data')
-    .select('value')
+    .select('value, updated_at')
     .eq('key', 'seller_products')
-    .single()
 
-  if (error) return Response.json({ error: error.message, count: 'error' })
+  if (error) return Response.json({ error: error.message })
   
-  // data is now a single row object, not an array
-  const count = data ? (Array.isArray(data.value) ? data.value.length : typeof data.value) : 'null'
-  const names = data && Array.isArray(data.value) ? data.value.map(p => p.nama) : []
+  if (!data || data.length === 0) return Response.json({ count: 'no rows' })
+  
+  const rows = data.map((r, i) => ({
+    index: i,
+    count: Array.isArray(r.value) ? r.value.length : typeof r.value,
+    names: Array.isArray(r.value) ? r.value.map(p => p.nama) : [],
+    updated_at: r.updated_at,
+  }))
 
   return Response.json({
-    count,
-    names,
-    totalQueryResults: data ? 'row found' : 'no row',
+    totalRows: data.length,
+    rows,
   })
 }
