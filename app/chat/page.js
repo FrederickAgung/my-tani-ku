@@ -67,12 +67,20 @@ export default function ChatListPage() {
   }
 
   const otherParty = (conv) => {
+    // Strategi 1: Cek participants
     if (conv.participants) {
-      const other = conv.participants.find(p => p.id !== user.id)
+      const other = conv.participants.find(p => String(p.id) !== String(user.id) && p.nama !== user.nama)
       if (other) return other.nama
     }
-    if (user.role === 'petani') return conv.buyerName
-    return conv.sellerName
+    // Strategi 2: Cek messages — cari sender yang bukan kita
+    if (conv.messages && conv.messages.length > 0) {
+      const otherMsg = conv.messages.find(m => m.senderId !== user.id && m.senderName !== user.nama)
+      if (otherMsg) return otherMsg.senderName
+    }
+    // Strategi 3: Field lama — kembalikan yang bukan nama kita
+    if (conv.buyerName !== user.nama) return conv.buyerName
+    if (conv.sellerName !== user.nama) return conv.sellerName
+    return conv.buyerName || conv.sellerName || 'Unknown'
   }
 
   const filteredUsers = users.filter(u =>

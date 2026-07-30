@@ -38,16 +38,19 @@ export async function POST(req) {
 
   // Cari percakapan yang sudah ada antara kedua user ini
   let conv = conversations.find(c => {
-    // Format baru: participants
+    // Format baru: participants — cocokkan ID ATAU nama
     if (c.participants) {
-      const ids = c.participants.map(p => p.id)
-      return ids.includes(senderId) && ids.includes(recipientId)
+      const pIds = c.participants.map(p => p.id).filter(Boolean)
+      const pNames = c.participants.map(p => p.nama)
+      // Cek by ID (jika kedua ID tersedia)
+      if (recipientId && pIds.includes(senderId) && pIds.includes(recipientId)) return true
+      // Cek by name (fallback)
+      if (pNames.includes(senderName) && pNames.includes(recipientName)) return true
     }
     // Format lama: buyerId/sellerName
     return (c.buyerId === senderId && c.sellerName === recipientName) ||
-           (c.buyerId === recipientId && c.sellerName === senderName) ||
-           (c.buyerName === senderName && c.sellerName === recipientName) ||
-           (c.buyerName === recipientName && c.sellerName === senderName)
+           (c.buyerName === recipientName && c.sellerName === senderName) ||
+           (c.buyerName === senderName && c.sellerName === recipientName)
   })
 
   // Konversi format lama ke baru jika perlu

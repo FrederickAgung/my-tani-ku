@@ -69,9 +69,16 @@ export default function ChatDetailPage() {
     </div>
   )
 
-  const otherParticipant = conversation.participants?.find(p => p.id !== user.id)
+  const otherParticipant = conversation.participants?.find(p => String(p.id) !== String(user.id) && p.nama !== user.nama)
   const otherName = otherParticipant?.nama || (
-    user.role === 'petani' ? conversation.buyerName : conversation.sellerName
+    // Cek messages untuk sender yang bukan kita
+    (() => {
+      const otherMsg = conversation.messages?.find(m => m.senderId !== user.id && m.senderName !== user.nama)
+      return otherMsg?.senderName
+    })() ||
+    // Fallback field lama — cari yang bukan nama kita
+    (conversation.buyerName !== user.nama ? conversation.buyerName : conversation.sellerName) ||
+    'Unknown'
   )
   const messages = conversation.messages || []
 

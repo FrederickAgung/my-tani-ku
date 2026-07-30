@@ -84,8 +84,8 @@ export default function NotificationBell({ user }) {
       </button>
 
       {open && (
-        <div className="fixed md:absolute right-0 md:right-auto md:top-full mt-0 md:mt-2 w-full md:w-96 bg-white shadow-xl border border-[rgba(0,0,0,0.1)] z-50"
-          style={{ maxHeight: 'min(80vh, 600px)', overflowY: 'auto', top: '56px', left: 0, right: 0 }}
+        <div className="fixed md:absolute right-2 md:right-0 top-12 md:top-full mt-0 md:mt-2 w-80 md:w-80 bg-white shadow-xl border border-[rgba(0,0,0,0.1)] z-50 rounded-xl"
+          style={{ maxHeight: 'min(80vh, 500px)', overflowY: 'auto' }}
         >
           {/* Dalam mobile (fixed) positioning diatur via CSS di atas */}
           <div className="sticky top-0 bg-white border-b border-[rgba(0,0,0,0.1)] px-4 py-3 flex items-center justify-between z-10">
