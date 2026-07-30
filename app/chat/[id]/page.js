@@ -22,10 +22,12 @@ export default function ChatDetailPage() {
     if (!user || !id) return
     const load = () => {
       fetch(`/api/chat?conversationId=${id}`)
-        .then(r => r.json()).then(data => setConversation(data))
+        .then(r => r.json()).then(data => {
+          if (data) setConversation(data)
+        })
     }
     load()
-    const interval = setInterval(load, 5000) // polling tiap 5 detik
+    const interval = setInterval(load, 5000)
     return () => clearInterval(interval)
   }, [user, id])
 
@@ -38,14 +40,19 @@ export default function ChatDetailPage() {
     if (!message.trim() || !user || sending) return
     setSending(true)
     try {
+      // Tentukan penerima
+      const otherParticipant = conversation.participants?.find(p => p.id !== user.id)
+      const recipientName = otherParticipant?.nama || (
+        user.role === 'petani' ? conversation.buyerName : conversation.sellerName
+      )
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          conversationId: Number(id),
-          buyerId: user.id,
-          buyerName: user.nama,
-          sellerName: conversation.sellerName,
+          senderId: user.id,
+          senderName: user.nama,
+          recipientName,
           message: message.trim()
         })
       })
@@ -62,7 +69,10 @@ export default function ChatDetailPage() {
     </div>
   )
 
-  const otherName = user.role === 'petani' ? conversation.buyerName : conversation.sellerName
+  const otherParticipant = conversation.participants?.find(p => p.id !== user.id)
+  const otherName = otherParticipant?.nama || (
+    user.role === 'petani' ? conversation.buyerName : conversation.sellerName
+  )
   const messages = conversation.messages || []
 
   return (
@@ -90,7 +100,7 @@ export default function ChatDetailPage() {
         ) : (
           <div className="space-y-3">
             {messages.map(msg => {
-              const isMe = msg.senderId === user.id
+              const isMe = msg.senderId === user.id || msg.senderName === user.nama
               return (
                 <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[75%] rounded-lg px-4 py-2 ${

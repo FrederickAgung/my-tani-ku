@@ -7,14 +7,14 @@ export default function NotificationBell({ user }) {
   const [open, setOpen] = useState(false)
   const ref = useRef()
 
-  // Auto-fetch notif tiap 10 detik (real-time via polling)
+  // Auto-fetch notif tiap 10 detik
   useEffect(() => {
     if (!user) return
     const fetchNotifs = () => {
       const role = user.role === 'petani' ? 'seller' : user.role
       fetch(`/api/notifications?userId=${user.id}&role=${role}&nama=${encodeURIComponent(user.nama)}`)
         .then(r => r.json())
-        .then(data => setNotifs(data.slice(0, 20)))
+        .then(data => setNotifs(data.slice(0, 50))) // ambil 50 notif terbaru
         .catch(() => {})
     }
     fetchNotifs()
@@ -31,6 +31,19 @@ export default function NotificationBell({ user }) {
 
   const unread = notifs.filter(n => !n.read).length
 
+  const markAllRead = async () => {
+    // Tandai semua notif yg belum dibaca
+    const unreadIds = notifs.filter(n => !n.read).map(n => n.id)
+    if (unreadIds.length === 0) return
+
+    await fetch('/api/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: unreadIds })
+    })
+    setNotifs(notifs.map(n => ({ ...n, read: true })))
+  }
+
   const markRead = async (id) => {
     await fetch('/api/notifications', {
       method: 'PATCH',
@@ -38,6 +51,14 @@ export default function NotificationBell({ user }) {
       body: JSON.stringify({ id })
     })
     setNotifs(notifs.map(n => n.id === id ? { ...n, read: true } : n))
+  }
+
+  // Mark all as read saat buka dropdown (supaya badge hilang)
+  const toggleOpen = () => {
+    if (!open) {
+      if (unread > 0) markAllRead()
+    }
+    setOpen(!open)
   }
 
   const iconByType = {
@@ -53,7 +74,7 @@ export default function NotificationBell({ user }) {
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="relative text-white/80 hover:text-white transition p-1">
+      <button onClick={toggleOpen} className="relative text-white/80 hover:text-white transition p-1">
         <i className="fas fa-bell text-lg"></i>
         {unread > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
@@ -63,10 +84,21 @@ export default function NotificationBell({ user }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-[rgba(0,0,0,0.1)] z-50 max-h-96 overflow-y-auto">
-          <div className="sticky top-0 bg-white border-b border-[rgba(0,0,0,0.1)] px-4 py-3 flex items-center justify-between rounded-t-xl">
+        <div className="fixed md:absolute right-0 md:right-auto md:top-full mt-0 md:mt-2 w-full md:w-96 bg-white shadow-xl border border-[rgba(0,0,0,0.1)] z-50"
+          style={{ maxHeight: 'min(80vh, 600px)', overflowY: 'auto', top: '56px', left: 0, right: 0 }}
+        >
+          {/* Dalam mobile (fixed) positioning diatur via CSS di atas */}
+          <div className="sticky top-0 bg-white border-b border-[rgba(0,0,0,0.1)] px-4 py-3 flex items-center justify-between z-10">
             <p className="font-semibold text-sm" style={{color: 'rgba(0,0,0,0.95)'}}>Notifikasi</p>
-            {unread > 0 && <span className="text-xs text-notion-blue font-medium">{unread} baru</span>}
+            <div className="flex items-center gap-2">
+              {unread > 0 && (
+                <button onClick={markAllRead}
+                  className="text-xs text-notion-blue hover:text-notion-blue-hover font-medium">
+                  Tandai dibaca
+                </button>
+              )}
+              <span className="text-xs text-notion-gray">{notifs.length} notif</span>
+            </div>
           </div>
 
           {notifs.length === 0 ? (

@@ -25,12 +25,22 @@ export async function POST(req) {
 }
 
 export async function PATCH(req) {
-  const { id } = await req.json()
+  const body = await req.json()
   const notifications = await readCollection('notifications')
-  const notif = notifications.find(n => n.id === id)
-  if (notif) {
-    notif.read = true
-    await writeCollection('notifications', notifications)
+
+  if (body.ids && Array.isArray(body.ids)) {
+    // Mark multiple notifications as read
+    for (const notification of notifications) {
+      if (body.ids.includes(notification.id)) {
+        notification.read = true
+      }
+    }
+  } else if (body.id) {
+    // Mark single notification as read
+    const notif = notifications.find(n => n.id === body.id)
+    if (notif) notif.read = true
   }
+
+  await writeCollection('notifications', notifications)
   return Response.json({ ok: true })
 }

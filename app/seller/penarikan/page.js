@@ -9,28 +9,66 @@ export default function PenarikanPage() {
   const [saldo, setSaldo] = useState(0)
   const [form, setForm] = useState({ jumlah: '', bank: 'BCA', norek: '', pemilik: '' })
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const hitungSaldo = async (u) => {
+    // Hitung total dari order delivered
+    const ordersRes = await fetch(`/api/orders?role=seller&nama=${encodeURIComponent(u.nama)}`)
+    const orders = await ordersRes.json()
+    const totalRevenue = orders
+      .filter(o => o.status === 'delivered')
+      .flatMap(o => o.items)
+      .filter(i => i.penjual === u.nama)
+      .reduce((s, i) => s + i.harga * (i.qty || 1), 0)
+
+    // Hitung total penarikan
+    const withdrawRes = await fetch(`/api/withdraw?penjual=${encodeURIComponent(u.nama)}`)
+    const withdrawals = await withdrawRes.json()
+    const totalWithdrawn = withdrawals.reduce((s, w) => s + w.jumlah, 0)
+
+    setSaldo(totalRevenue - totalWithdrawn)
+  }
 
   useEffect(() => {
     const u = localStorage.getItem('myTaniku_user')
     if (!u || JSON.parse(u).role !== 'petani') { router.push('/login'); return }
     const parsed = JSON.parse(u)
     setUser(parsed)
-    // ponytail: saldo dari order delivered
-    fetch(`/api/orders?role=seller&nama=${encodeURIComponent(parsed.nama)}`)
-      .then(r => r.json())
-      .then(orders => {
-        const total = orders
-          .filter(o => o.status === 'delivered')
-          .flatMap(o => o.items)
-          .filter(i => i.penjual === parsed.nama)
-          .reduce((s, i) => s + i.harga * (i.qty || 1), 0)
-        setSaldo(total)
-      })
+    hitungSaldo(parsed)
   }, [router])
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
   const jumlah = parseInt(form.jumlah) || 0
   const bisaTarik = jumlah > 0 && jumlah <= saldo
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!bisaTarik || loading || !user) return
+    setLoading(true)
+    setError('')
+
+    const res = await fetch('/api/withdraw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        penjual: user.nama,
+        jumlah,
+        bank: form.bank,
+        norek: form.norek,
+        pemilik: form.pemilik,
+      })
+    })
+
+    const data = await res.json()
+    setLoading(false)
+
+    if (res.ok) {
+      setSent(true)
+    } else {
+      setError(data.error || 'Gagal mengajukan penarikan')
+    }
+  }
 
   if (sent) return (
     <div className="max-w-lg mx-auto px-4 py-20 text-center">
@@ -39,8 +77,9 @@ export default function PenarikanPage() {
       </div>
       <h1 className="text-2xl font-bold mb-2" style={{color: 'rgba(0,0,0,0.95)'}}>Pengajuan Berhasil!</h1>
       <p className="text-notion-gray mb-1">Penarikan Rp {jumlah.toLocaleString('id-ID')}</p>
-      <p className="text-notion-gray text-sm mb-8">Ke {form.bank} {form.norek} a/n {form.pemilik}</p>
-      <p className="text-xs text-notion-gray mb-6">Dana akan diproses 1x24 jam kerja</p>
+      <p className="text-notion-gray text-sm mb-2">Ke {form.bank} {form.norek} a/n {form.pemilik}</p>
+      <p className="text-xs text-notion-gray mb-2">Sisa saldo: Rp {Math.max(0, saldo - jumlah).toLocaleString('id-ID')}</p>
+      <p className="text-xs text-notion-gray mb-8">Dana akan diproses 1x24 jam kerja</p>
       <Link href="/seller" className="bg-notion-blue hover:bg-notion-blue-hover text-white px-6 py-2.5 rounded font-medium">Kembali</Link>
     </div>
   )
@@ -55,7 +94,9 @@ export default function PenarikanPage() {
         <p className="text-3xl font-bold mt-1">Rp {saldo.toLocaleString('id-ID')}</p>
       </div>
 
-      <form onSubmit={e => { e.preventDefault(); if (bisaTarik) { setSent(true); /* ponytail: no actual transfer */ } }} className="bg-white border border-[rgba(0,0,0,0.1)] rounded-lg p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white border border-[rgba(0,0,0,0.1)] rounded-lg p-6 space-y-4">
+        {error && <p className="bg-red-50 text-red-600 text-sm p-3 rounded-lg">{error}</p>}
+
         <div>
           <label className="block text-sm font-medium text-notion-gray mb-1">Jumlah Penarikan</label>
           <input type="number" name="jumlah" required min={1000} max={saldo} value={form.jumlah} onChange={handleChange}
@@ -83,9 +124,11 @@ export default function PenarikanPage() {
             className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-notion-blue" />
         </div>
 
-        <button type="submit" disabled={!bisaTarik}
-          className="w-full bg-notion-blue hover:bg-notion-blue-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded transition">
-          {bisaTarik ? `Tarik Rp ${jumlah.toLocaleString('id-ID')}` : 'Masukkan jumlah yang valid'}
+        <button type="submit" disabled={!bisaTarik || loading}
+          className="w-full bg-notion-blue hover:bg-notion-blue-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded transition flex items-center justify-center gap-2">
+          {loading ? (
+            <><span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span> Memproses...</>
+          ) : bisaTarik ? `Tarik Rp ${jumlah.toLocaleString('id-ID')}` : 'Masukkan jumlah yang valid'}
         </button>
       </form>
     </div>

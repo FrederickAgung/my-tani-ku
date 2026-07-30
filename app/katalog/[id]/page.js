@@ -87,8 +87,12 @@ export default function DetailProdukPage() {
     if (!produk) return
 
     // Cari percakapan yang sudah ada
-    const res = await fetch(`/api/chat?buyerId=${user.id}&seller=${encodeURIComponent(produk.penjual)}`)
-    const existing = await res.json()
+    const res = await fetch(`/api/chat?userId=${user.id}&userName=${encodeURIComponent(user.nama)}`)
+    const existingList = await res.json()
+    const existing = existingList.find(c => {
+      if (c.participants) return c.participants.some(p => p.nama === produk.penjual)
+      return c.sellerName === produk.penjual || c.buyerName === produk.penjual
+    })
 
     if (existing && existing.id) {
       router.push(`/chat/${existing.id}`)
@@ -98,9 +102,10 @@ export default function DetailProdukPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          buyerId: user.id,
-          buyerName: user.nama,
-          sellerName: produk.penjual,
+          senderId: user.id,
+          senderName: user.nama,
+          recipientId: produk.penjualId || null,
+          recipientName: produk.penjual,
           message: `Halo, saya tertarik dengan produk ${produk.nama}. Apakah masih tersedia?`
         })
       })
