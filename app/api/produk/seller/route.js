@@ -44,3 +44,19 @@ export async function GET() {
   const products = await readCollection('seller_products')
   return Response.json(products)
 }
+
+export async function PATCH(req) {
+  const { id, nama, kategori, harga, deskripsi } = await req.json()
+
+  const products = await readCollection('seller_products')
+  const index = products.findIndex(p => p.id === id)
+  if (index === -1) return Response.json({ error: 'Produk tidak ditemukan' }, { status: 404 })
+
+  if (nama) products[index].nama = nama
+  if (kategori) products[index].kategori = kategori
+  if (harga) products[index].harga = parseInt(harga)
+  if (deskripsi !== undefined) products[index].deskripsi = deskripsi
+
+  await writeCollection('seller_products', products)
+  return Response.json({ produk: products[index] })
+}

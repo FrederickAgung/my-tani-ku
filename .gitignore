@@ -28,3 +28,5 @@ test_write_*.txt
 # OS
 .DS_Store
 Thumbs.db
+
+.vercel

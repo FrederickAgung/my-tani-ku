@@ -19,6 +19,7 @@ export default function KeranjangPage() {
   const [lastTotal, setLastTotal] = useState(0)
   const [lastMetode, setLastMetode] = useState('')
   const [midtransLoading, setMidtransLoading] = useState(false)
+  const [payLoading, setPayLoading] = useState(false)
 
   useEffect(() => {
     const u = localStorage.getItem('myTaniku_user')
@@ -67,8 +68,14 @@ export default function KeranjangPage() {
   }
 
   const bayarStandard = async () => {
-    await placeOrder(selected)
-    setStep('success')
+    if (payLoading) return
+    setPayLoading(true)
+    try {
+      await placeOrder(selected)
+      setStep('success')
+    } finally {
+      setPayLoading(false)
+    }
   }
 
   const bayarMidtrans = async () => {
@@ -126,9 +133,11 @@ export default function KeranjangPage() {
           ) : `Bayar Rp ${grandTotal.toLocaleString('id-ID')} via Midtrans`}
         </button>
       ) : (
-        <button onClick={bayarStandard} disabled={!selected}
-          className="w-full bg-notion-blue hover:bg-notion-blue-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded transition text-lg">
-          Bayar Rp {grandTotal.toLocaleString('id-ID')}
+        <button onClick={bayarStandard} disabled={!selected || payLoading}
+          className="w-full bg-notion-blue hover:bg-notion-blue-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded transition text-lg flex items-center justify-center gap-2">
+          {payLoading ? (
+            <><span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span> Memproses...</>
+          ) : `Bayar Rp ${grandTotal.toLocaleString('id-ID')}`}
         </button>
       )}
     </div>

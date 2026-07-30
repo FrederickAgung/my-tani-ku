@@ -45,7 +45,7 @@ export default function RootLayout({ children }) {
                   <Link href="/chat" className={`hover:text-notion-light ${pathname.startsWith('/chat') ? 'text-notion-light' : 'text-white/80'}`}><i className="fas fa-comment mr-1"></i>Chat</Link>
                   {user.role === 'petani' && (
                     <>
-                      <Link href="/seller" className={`hover:text-notion-light ${pathname.startsWith('/seller') ? 'text-notion-light' : 'text-white/80'}`}>Jual</Link>
+                      <Link href="/seller" className={`hover:text-notion-light ${pathname === '/seller' ? 'text-notion-light' : 'text-white/80'}`}>Jual</Link>
                       <Link href="/seller/laporan" className={`hover:text-notion-light hidden lg:inline ${pathname.startsWith('/seller/laporan') ? 'text-notion-light' : 'text-white/80'}`}>Laporan</Link>
                       <Link href="/seller/penarikan" className={`hover:text-notion-light ${pathname.startsWith('/seller/penarikan') ? 'text-notion-light' : 'text-white/80'}`}>Tarik</Link>
                     </>

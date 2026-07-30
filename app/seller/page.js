@@ -89,6 +89,11 @@ export default function SellerPage() {
                   {p.kategori === 'hasil-tani' ? 'Hasil Tani' : p.kategori}
                 </span>
               </div>
+              <Link href={`/seller/edit/${p.id}`}
+                className="text-notion-gray hover:text-notion-blue transition p-2 rounded-lg hover:bg-[#f2f9ff]"
+                title="Edit produk">
+                <i className="fas fa-pen"></i>
+              </Link>
             </div>
           ))}
         </div>
