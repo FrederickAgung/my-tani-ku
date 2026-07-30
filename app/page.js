@@ -30,7 +30,7 @@ export default function HomePage() {
         </div>
         <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-28 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/80 text-xs font-medium px-4 py-1.5 rounded-pill mb-6">
-            <i className="fas fa-leaf text-accent-green"></i>
+            <img src="/logo.png" alt="" className="w-4 h-4 object-contain" />
             Marketplace Pertanian Indonesia
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight leading-tight">

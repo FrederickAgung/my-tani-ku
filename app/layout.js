@@ -42,6 +42,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
@@ -50,9 +52,7 @@ export default function RootLayout({ children }) {
         <nav className="bg-white border-b border-border-light shadow-nav sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 font-bold text-lg text-accent-green hover:text-accent-green-hover transition">
-              <span className="w-7 h-7 bg-accent-green rounded-lg flex items-center justify-center text-white text-xs">
-                <i className="fas fa-leaf"></i>
-              </span>
+              <img src="/logo.png" alt="MyTani Ku" className="w-9 h-9 object-contain" />
               MyTani Ku
             </Link>
 
@@ -156,9 +156,7 @@ export default function RootLayout({ children }) {
         <footer className="bg-surface-dark text-text-ondark/60 text-center text-sm py-8 mt-12" style={{backgroundColor: '#0f1a0f'}}>
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="w-6 h-6 bg-accent-green rounded flex items-center justify-center text-white text-xs">
-                <i className="fas fa-leaf"></i>
-              </span>
+              <img src="/logo.png" alt="MyTani Ku" className="w-8 h-8 object-contain" />
               <span className="font-semibold text-text-ondark">MyTani Ku</span>
             </div>
             <p className="text-text-ondark/50">Marketplace Pertanian Indonesia</p>
