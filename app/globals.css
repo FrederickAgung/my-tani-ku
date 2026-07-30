@@ -4,14 +4,81 @@
 
 :root {
   --color-bg: #ffffff;
-  --color-alt: #f6f5f4;
-  --color-text: rgba(0,0,0,0.95);
-  --color-muted: #615d59;
-  --color-faint: #a39e98;
-  --color-accent: #059669;
-  --color-accent-hover: #047857;
-  --color-border: rgba(0,0,0,0.1);
-  --color-success: #1aae39;
-  --color-warn: #dd5b00;
+  --color-alt: #f8f6f3;
+  --color-surface: #ffffff;
+  --color-text: #0a0a0a;
+  --color-muted: #525252;
+  --color-faint: #a3a3a3;
+  --color-accent: #16a34a;
+  --color-accent-hover: #15803d;
+  --color-accent-light: #dcfce7;
+  --color-border: rgba(0,0,0,0.08);
+  --color-success: #16a34a;
+  --color-warn: #ea580c;
+  --color-gold: #c48844;
 }
-body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Card base */
+.card {
+  @apply bg-white border border-border-light rounded-lg shadow-card;
+}
+.card-hover {
+  @apply card hover:shadow-card-hover hover:border-border-medium;
+}
+
+/* Button base */
+.btn-primary {
+  @apply bg-accent-green hover:bg-accent-green-hover text-white font-medium px-5 py-2.5 rounded-lg transition disabled:bg-gray-300 disabled:cursor-not-allowed;
+}
+.btn-secondary {
+  @apply border border-border-medium hover:border-accent-green text-text-primary hover:text-accent-green font-medium px-5 py-2.5 rounded-lg transition;
+}
+.btn-ghost {
+  @apply hover:bg-surface-warm text-text-secondary hover:text-text-primary px-3 py-2 rounded-lg transition;
+}
+
+/* Input base */
+.input-field {
+  @apply w-full border border-border-medium rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-green/30 focus:border-accent-green bg-white;
+}
+
+/* Badge */
+.badge {
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-pill text-xs font-medium;
+}
+.badge-green {
+  @apply badge bg-accent-green-light text-accent-green;
+}
+.badge-gold {
+  @apply badge bg-amber-50 text-accent-gold;
+}

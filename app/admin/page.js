@@ -8,8 +8,8 @@ const tabs = [
   { id: 'orders', label: 'Pesanan', icon: 'fa-clipboard-list' },
 ]
 
-const statusLabel = { pending: 'Pending', shipped: 'Dikirim', delivered: 'Selesai' }
-const statusColor = { pending: 'text-amber-600', shipped: 'text-blue-600', delivered: 'text-green-600' }
+const statusLabel = { pending: 'Pending', shipped: 'Dikirim', delivered: 'Selesai', cancelled: 'Batal' }
+const statusColor = { pending: 'text-amber-600', shipped: 'text-blue-600', delivered: 'text-green-600', cancelled: 'text-red-500' }
 
 export default function AdminPage() {
   const router = useRouter()

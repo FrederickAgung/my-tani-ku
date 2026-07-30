@@ -106,6 +106,21 @@ export async function PATCH(req) {
     })
   }
 
+  if (action === 'cancel') {
+    if (order.status === 'shipped' || order.status === 'delivered') {
+      return Response.json({ error: 'Pesanan sudah dikirim, tidak bisa dibatalkan' }, { status: 400 })
+    }
+    order.status = 'cancelled'
+
+    await addNotification({
+      userId: order.buyerId,
+      type: 'info',
+      title: 'Pesanan Dibatalkan',
+      message: `Pesanan #${order.id} telah dibatalkan`,
+      link: '/pesanan'
+    })
+  }
+
   await writeCollection('orders', orders)
   return Response.json({ order })
 }

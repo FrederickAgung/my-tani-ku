@@ -74,7 +74,7 @@ export default function NotificationBell({ user }) {
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={toggleOpen} className="relative text-white/80 hover:text-white transition p-1">
+      <button onClick={toggleOpen} className="relative text-text-secondary hover:text-text-primary transition p-1">
         <i className="fas fa-bell text-lg"></i>
         {unread > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">

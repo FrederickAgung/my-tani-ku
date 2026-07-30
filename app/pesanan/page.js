@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-const statusLabel = { pending: 'Menunggu Dikirim', shipped: 'Dikirim', delivered: 'Selesai' }
-const statusColor = { pending: 'text-amber-600', shipped: 'text-notion-blue', delivered: 'text-green-600' }
+const statusLabel = { pending: 'Menunggu Dikirim', shipped: 'Dikirim', delivered: 'Selesai', cancelled: 'Dibatalkan' }
+const statusColor = { pending: 'text-amber-600', shipped: 'text-notion-blue', delivered: 'text-green-600', cancelled: 'text-red-500' }
 
 export default function PesananPage() {
   const router = useRouter()
@@ -41,6 +41,21 @@ export default function PesananPage() {
       body: JSON.stringify({ id, action: 'deliver' })
     })
     setOrders(orders.map(o => o.id === id ? { ...o, status: 'delivered' } : o))
+  }
+
+  const cancelOrder = async (id) => {
+    if (!confirm('Yakin ingin membatalkan pesanan ini?')) return
+    const res = await fetch('/api/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, action: 'cancel' })
+    })
+    if (res.ok) {
+      setOrders(orders.map(o => o.id === id ? { ...o, status: 'cancelled' } : o))
+    } else {
+      const data = await res.json()
+      alert(data.error || 'Gagal membatalkan pesanan')
+    }
   }
 
   if (!user) return null
@@ -97,6 +112,17 @@ export default function PesananPage() {
                   <button onClick={() => ship(o.id)} disabled={!shipForm[o.id]?.courier || !shipForm[o.id]?.tracking}
                     className="bg-notion-blue hover:bg-notion-blue-hover disabled:bg-gray-300 text-white text-sm px-4 py-1.5 rounded font-medium">
                     Kirim
+                  </button>
+                </div>
+              )}
+
+              {/* Buyer: cancel pending */}
+              {!isSeller && o.status === 'pending' && (
+                <div className="mt-3 pt-3 border-t border-[rgba(0,0,0,0.1)] flex items-center justify-between">
+                  <span className="text-xs text-text-muted">Pesanan menunggu dikirim penjual</span>
+                  <button onClick={() => cancelOrder(o.id)}
+                    className="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 px-3 py-1.5 rounded-lg font-medium transition">
+                    <i className="fas fa-times mr-1"></i>Batalkan
                   </button>
                 </div>
               )}
