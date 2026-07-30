@@ -13,7 +13,7 @@ export async function GET() {
     SUPABASE_SERVICE_ROLE_KEY_set: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     SUPABASE_ANON_KEY_set: !!process.env.SUPABASE_ANON_KEY,
     NEXT_PUBLIC_SUPABASE_ANON_KEY_set: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    resolvedUrl: supabaseUrl ? supabaseUrl.substring(0, 20) + '...' : 'null',
+    resolvedUrl: supabaseUrl ? supabaseUrl : 'null',
     resolvedKeyLength: supabaseKey ? supabaseKey.length : 0,
     resolvedKeyPrefix: supabaseKey ? supabaseKey.substring(0, 8) + '...' + supabaseKey.substring(supabaseKey.length - 4) : 'null',
     isConfigured: isSupabaseConfigured(),
